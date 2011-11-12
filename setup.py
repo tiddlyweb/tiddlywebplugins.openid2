@@ -25,5 +25,6 @@ setup(
     install_requires = ['setuptools',
         'tiddlyweb',
         'python-openid'],
-    zip_safe = False
+    zip_safe = False,
+    license = 'BSD'
     )
