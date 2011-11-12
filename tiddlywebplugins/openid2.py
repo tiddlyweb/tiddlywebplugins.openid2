@@ -1,3 +1,17 @@
+"""
+This is an OpenID challenger for TiddlyWeb that replaces the one that
+was originally included in the core TiddlyWeb package. It improves on
+that one by using the python-openid package, thus supporting OpenID 2
+and improved discovery mechanisms.
+
+To use, add 'tiddlywebplugins.openid2' to auth_systems via
+tiddlywebconfig.py. The following example replaces all existing
+auth_systems with just openid.
+
+config = {
+    'auth_systems': ['tiddlywebplugins.openid2'],
+}
+"""
 
 import logging
 import urlparse
@@ -42,18 +56,21 @@ class Challenger(ChallengerInterface):
             'tiddlyweb_redirect', ['/'])[0]
 
         if not openid_url:
-            return self._render_form(environ, start_response, message='Enter an openid')
+            return self._render_form(environ, start_response,
+                    message='Enter an openid')
         # Make a bare bones stateless consumer
         oidconsumer = consumer.Consumer({}, None)
 
         try:
             request = oidconsumer.begin(openid_url)
         except consumer.DiscoveryFailure, exc:
-            return self._render_form(environ, start_response, openid=openid_url,
+            return self._render_form(environ, start_response,
+                    openid=openid_url,
                     message='Error in discovery: %s' % exc[0])
 
         if request is None:
-            return self._render_form(environ, start_response, openid=openid_url,
+            return self._render_form(environ, start_response,
+                    openid=openid_url,
                     message='No open id services for %s' % openid_url)
         else:
             trust_root = server_base_url(environ)
@@ -63,11 +80,12 @@ class Challenger(ChallengerInterface):
             request.return_to_args['tiddlyweb_redirect'] = redirect
 
             if request.shouldSendRedirect():
-                redirect_url = request.redirectURL(trust_root, return_to, immediate=False)
+                redirect_url = request.redirectURL(trust_root, return_to,
+                        immediate=False)
                 raise HTTP302(redirect_url)
             else:
                 form_html = request.htmlMarkup(trust_root, return_to,
-                        form_tag_attrs={'id':'openid_message'},
+                        form_tag_attrs={'id': 'openid_message'},
                         immediate=False)
                 start_response('200 OK', [
                     ('Content-Type', 'text/html; charset=UTF-8')])
@@ -98,7 +116,8 @@ class Challenger(ChallengerInterface):
                     message='You cancelled, try again with something else?')
         elif info.status == consumer.SETUP_NEEDED:
             if info.setup_url:
-                message = '<a href=%s>Setup needed at openid server.</a>' % info.setup_url
+                message = ('<a href=%s>Setup needed at openid server.</a>'
+                        % info.setup_url)
             else:
                 message = 'More information needed at server'
             return self._render_form(environ, start_response,
@@ -128,10 +147,11 @@ class Challenger(ChallengerInterface):
                     ('Set-Cookie', cookie_header_string)])
         return [uri]
 
-    def _render_form(self, environ, start_response, openid='', message='', form=''):
+    def _render_form(self, environ, start_response, openid='',
+            message='', form=''):
         redirect = environ['tiddlyweb.query'].get(
             'tiddlyweb_redirect', ['/'])[0]
-        start_response('200 OK' , [
+        start_response('200 OK', [
             ('Content-Type', 'text/html')])
         environ['tiddlyweb.title'] = 'OpenID Login'
         return ["""
