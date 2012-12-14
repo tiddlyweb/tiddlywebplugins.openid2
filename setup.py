@@ -2,7 +2,7 @@ AUTHOR = 'Chris Dent'
 AUTHOR_EMAIL = 'cdent@peermore.com'
 NAME = 'tiddlywebplugins.openid2'
 DESCRIPTION = 'An improved openid challenger for TiddlyWeb'
-VERSION = '0.7'
+VERSION = '0.8'
 
 
 import os
@@ -23,7 +23,8 @@ setup(
     author_email = AUTHOR_EMAIL,
     platforms = 'Posix; MacOS X; Windows',
     install_requires = ['setuptools',
-        'tiddlyweb',
+        'tiddlyweb>=1.3.0',
+        'httpexceptor',
         'python-openid'],
     zip_safe = False,
     license = 'BSD'

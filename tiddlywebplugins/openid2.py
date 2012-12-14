@@ -16,12 +16,13 @@ config = {
 import logging
 import urlparse
 
+from httpexceptor import HTTP302
+
 from openid import oidutil
 from openid.consumer import consumer
 
 from tiddlyweb.web.challengers import ChallengerInterface
 from tiddlyweb.web.util import server_base_url, server_host_url, make_cookie
-from tiddlyweb.web.http import HTTP302
 
 
 def log_message(message, level=0):
