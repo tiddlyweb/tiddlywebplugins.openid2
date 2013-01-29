@@ -25,13 +25,16 @@ from tiddlyweb.web.challengers import ChallengerInterface
 from tiddlyweb.web.util import server_base_url, server_host_url, make_cookie
 
 
+LOGGER = logging.getLogger(__name__)
+
+
 def log_message(message, level=0):
     """
     Redefine the Python OpenID log function,
     which just writes to stderr, spewing all
     over the place.
     """
-    logging.debug(message)
+    LOGGER.debug(message)
 
 oidutil.log = log_message
 
